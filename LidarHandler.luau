@@ -63,7 +63,6 @@ local function castRay(startPosition, direction)
 	return rayResult
 end
 
-
 local function initializeLidarParticles(raycastResultArray)
 	if raycastResultArray then
 		coroutine.wrap(function()
@@ -112,7 +111,6 @@ local function doSquareLidar()
 			table.insert(raycastResultArray, raycastResult)
 			local screenPosition = Camera:WorldToViewportPoint(raycastResult.Position)
 			raycastScreenPositionDictionary[raycastResult] = screenPosition
-
 		end
 	end	
 	-- Sort raycastResultArray based on screen Y value from raycastScreenPositionDictionary
@@ -176,7 +174,6 @@ local function onUserInputBegin(input, gameProcessedEvent)
 			task.wait(0.35)
 			isHoldingMiddleButton = false
 		end
-
 	elseif input.KeyCode == Enum.KeyCode.U then
 		if gameProcessedEvent then return end 
 		LIDAR_CIRCLE_RADIUS = LIDAR_CIRCLE_RADIUS + 1
