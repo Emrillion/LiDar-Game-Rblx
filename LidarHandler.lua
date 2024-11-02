@@ -1,14 +1,16 @@
 --!strict
---LiDar Script v0.8.1 (by Emrillion) 
+--LiDar Script v0.8.2 (by Emrillion) 
 --Rewrite 1, added coruotines
 ---------------------------------------
 ---------------Variables---------------
 ---------------------------------------
 local RunService = game:GetService('RunService')
+local ContextActionService = game:GetService('ContextActionService')
 local UserInputService = game:GetService('UserInputService')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character.Humanoid or character:WaitForChild("Humanoid")
 local Camera = workspace.CurrentCamera
 
 local PartCacheModule = require(ReplicatedStorage:WaitForChild("PartCache"))
@@ -63,6 +65,26 @@ local function castRay(startPosition, direction)
 	return rayResult
 end
 
+local function setPlayerControl(enable)
+	
+	if enable then
+		ContextActionService:UnbindAction("DisableMovement")
+
+		Camera.CameraType = Enum.CameraType.Custom
+	else
+		ContextActionService:BindAction("DisableMovement", function() return Enum.ContextActionResult.Sink end,
+			false, Enum.PlayerActions.CharacterForward,
+			Enum.PlayerActions.CharacterBackward,
+			Enum.PlayerActions.CharacterLeft,
+			Enum.PlayerActions.CharacterRight,
+			Enum.PlayerActions.CharacterJump)
+
+
+		Camera.CameraType = Enum.CameraType.Scriptable
+		Camera.CFrame = Camera.CFrame 
+	end
+end
+
 local function initializeLidarParticles(raycastResultArray)
 	if raycastResultArray then
 		coroutine.wrap(function()
@@ -81,9 +103,9 @@ local function initializeLidarParticles(raycastResultArray)
 						processedParticles = 0 
 						wait() 
 					end
-
 				end
 			end
+			setPlayerControl(true)
 		end)()
 	end
 end
@@ -111,6 +133,7 @@ local function doSquareLidar()
 			table.insert(raycastResultArray, raycastResult)
 			local screenPosition = Camera:WorldToViewportPoint(raycastResult.Position)
 			raycastScreenPositionDictionary[raycastResult] = screenPosition
+
 		end
 	end	
 	-- Sort raycastResultArray based on screen Y value from raycastScreenPositionDictionary
@@ -119,6 +142,7 @@ local function doSquareLidar()
 	end)
 	
 	print("⬜ Initalizing...")
+	setPlayerControl(false)
 	initializeLidarParticles(raycastResultArray)
 	print("⬜ Square RayCast Time:", testTime - tick(), "seconds")
 	print("⬜ Square RayCast Frames:", testFrame - currentFrame)
@@ -174,6 +198,7 @@ local function onUserInputBegin(input, gameProcessedEvent)
 			task.wait(0.35)
 			isHoldingMiddleButton = false
 		end
+
 	elseif input.KeyCode == Enum.KeyCode.U then
 		if gameProcessedEvent then return end 
 		LIDAR_CIRCLE_RADIUS = LIDAR_CIRCLE_RADIUS + 1
@@ -208,3 +233,4 @@ RunService.RenderStepped:Connect(function()
 		doCircleLidar()
 	end
 end)
+
