@@ -1,6 +1,6 @@
 --!strict
---LiDar Script v0.8.2 (by Emrillion) 
---Rewrite 1, added coruotines
+--LiDar Script v0.8.3 (by Emrillion) 
+--Added Ignore all player characters
 ---------------------------------------
 ---------------Variables---------------
 ---------------------------------------
@@ -14,6 +14,7 @@ local humanoid = character.Humanoid or character:WaitForChild("Humanoid")
 local Camera = workspace.CurrentCamera
 
 local PartCacheModule = require(ReplicatedStorage:WaitForChild("PartCache"))
+local SharedClientDataModule = require(game.StarterPlayer.StarterPlayerScripts.SharedClientDataModule)
 
 local lidarFolder = workspace:WaitForChild("LidarFolder")
 local lidarScanFolder = workspace:WaitForChild("LidarScanFolder")
@@ -33,11 +34,11 @@ local LIDAR_BOX_X_SIZE = LIDAR_BOX_Y_SIZE * aspectRatio       -- Width
 local LIDAR_DENSITY = 10000
 
 local isRightMouseButtonDown = false
-local LidarPCache = PartCacheModule.new(lidarTemplateParticle, 50000, lidarFolder)
-local LidarScanPCache = PartCacheModule.new(lidarScanTemplate, 50, lidarScanFolder)
-
-local currentFrame = 0
 local isHoldingMiddleButton = false
+local currentFrame = 0
+
+local LidarPCache = PartCacheModule.new(lidarTemplateParticle, 100000, lidarFolder)
+--local LidarScanPCache = PartCacheModule.new(lidarScanTemplate, 50, lidarScanFolder)
 
 ---------------------------------------
 ---------------Functions---------------
@@ -59,7 +60,13 @@ end
 
 local function castRay(startPosition, direction)
 	local rayParams = RaycastParams.new()
-	rayParams.FilterDescendantsInstances = {character, Camera}
+	local ignoreList = {}
+	for _, character in pairs(SharedClientDataModule.characters) do
+		table.insert(ignoreList, character)
+	end
+	table.insert(ignoreList, workspace.CurrentCamera)
+
+	rayParams.FilterDescendantsInstances = ignoreList
 	rayParams.FilterType = Enum.RaycastFilterType.Exclude
 	local rayResult = workspace:Raycast(startPosition, direction * LIDAR_RANGE, rayParams)
 	return rayResult
