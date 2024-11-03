@@ -1,6 +1,6 @@
 --!strict
---LiDar Script v0.8.3 (by Emrillion) 
---Added Ignore all player characters
+--LiDar Script v0.8.4 (by Emrillion) 
+--Fixed Square Lidar scaning in different sizes depending on client screen size
 ---------------------------------------
 ---------------Variables---------------
 ---------------------------------------
@@ -28,7 +28,7 @@ local aspectRatio = Camera.ViewportSize.X / Camera.ViewportSize.Y
 
 local LIDAR_CIRCLE_RADIUS = 2.5
 local LIDAR_RANGE = 25
--- Calculate view width and height based on the LIDAR_RANGE
+---- Calculate view width and height based on the LIDAR_RANGE
 local LIDAR_BOX_Y_SIZE = 2 * LIDAR_RANGE * math.tan(fov / 2)  -- Height
 local LIDAR_BOX_X_SIZE = LIDAR_BOX_Y_SIZE * aspectRatio       -- Width
 local LIDAR_DENSITY = 10000
@@ -37,7 +37,7 @@ local isRightMouseButtonDown = false
 local isHoldingMiddleButton = false
 local currentFrame = 0
 
-local LidarPCache = PartCacheModule.new(lidarTemplateParticle, 100000, lidarFolder)
+local LidarPCache = PartCacheModule.new(lidarTemplateParticle, 50000, lidarFolder)
 --local LidarScanPCache = PartCacheModule.new(lidarScanTemplate, 50, lidarScanFolder)
 
 ---------------------------------------
@@ -95,7 +95,7 @@ end
 local function initializeLidarParticles(raycastResultArray)
 	if raycastResultArray then
 		coroutine.wrap(function()
-			local particlesPerFrame = 500
+			local particlesPerFrame = 400
 			local processedParticles = 0
 
 			for i, raycastResult in ipairs(raycastResultArray) do
@@ -121,6 +121,10 @@ end
 local function doSquareLidar()
 	local testTime = tick()
 	local testFrame = currentFrame
+	
+	aspectRatio = Camera.ViewportSize.X / Camera.ViewportSize.Y
+	LIDAR_BOX_Y_SIZE = 2 * LIDAR_RANGE * math.tan(fov / 2)
+	LIDAR_BOX_X_SIZE = LIDAR_BOX_Y_SIZE * aspectRatio
 
 	local raycastResultArray = {}
 	local raycastScreenPositionDictionary = {}
@@ -240,4 +244,3 @@ RunService.RenderStepped:Connect(function()
 		doCircleLidar()
 	end
 end)
-
