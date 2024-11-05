@@ -2,15 +2,15 @@
 print("🔵 Client Started")
 
 local Players = game:GetService("Players")
-local SharedClientDataModule = require(game.StarterPlayer.StarterPlayerScripts.SharedClientDataModule)
+local ClientDataModule = require(game.StarterPlayer.StarterPlayerScripts.ClientDataModule)
 
 local function addCharacter(player)
 	if player.Character then
-		SharedClientDataModule.characters[player.UserId] = player.Character
+		ClientDataModule.characters[player.UserId] = player.Character
 	end
 
 	player.CharacterAdded:Connect(function(character)
-		SharedClientDataModule.characters[player.UserId] = character
+		ClientDataModule.characters[player.UserId] = character
 	end)
 end
 
@@ -25,6 +25,6 @@ Players.PlayerAdded:Connect(addCharacter)
 --	SharedClientDataModule.characters[player.UserId] = nil
 --end)
 
-for userId, character in pairs(SharedClientDataModule.characters) do
+for userId, character in pairs(ClientDataModule.characters) do
 	print(userId, character)
 end
