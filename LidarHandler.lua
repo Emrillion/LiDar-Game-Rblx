@@ -14,7 +14,7 @@ local humanoid = character.Humanoid or character:WaitForChild("Humanoid")
 local Camera = workspace.CurrentCamera
 
 local PartCacheModule = require(ReplicatedStorage:WaitForChild("PartCache"))
-local SharedClientDataModule = require(game.StarterPlayer.StarterPlayerScripts.SharedClientDataModule)
+local ClientDataModule = require(game.StarterPlayer.StarterPlayerScripts.ClientDataModule)
 
 local lidarFolder = workspace:WaitForChild("LidarFolder")
 local lidarScanFolder = workspace:WaitForChild("LidarScanFolder")
@@ -61,10 +61,11 @@ end
 local function castRay(startPosition, direction)
 	local rayParams = RaycastParams.new()
 	local ignoreList = {}
-	for _, character in pairs(SharedClientDataModule.characters) do
+	for _, character in pairs(ClientDataModule.characters) do
 		table.insert(ignoreList, character)
 	end
 	table.insert(ignoreList, workspace.CurrentCamera)
+	table.insert(ignoreList, workspace.Coolcoolcool3337)
 
 	rayParams.FilterDescendantsInstances = ignoreList
 	rayParams.FilterType = Enum.RaycastFilterType.Exclude
