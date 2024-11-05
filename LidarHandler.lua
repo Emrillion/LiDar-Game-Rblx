@@ -65,7 +65,6 @@ local function castRay(startPosition, direction)
 		table.insert(ignoreList, character)
 	end
 	table.insert(ignoreList, workspace.CurrentCamera)
-	table.insert(ignoreList, workspace.Coolcoolcool3337)
 
 	rayParams.FilterDescendantsInstances = ignoreList
 	rayParams.FilterType = Enum.RaycastFilterType.Exclude
